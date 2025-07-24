@@ -5,7 +5,7 @@ pipeline {
         DOCKERHUB_IMAGE = 'drdocker108/java-demo'
         TAG = "${env.BUILD_NUMBER}"
         K8S_YAML = 'k8s-deployment.yaml'
-        KUBECONFIG = 'C:/Users/rbih4/.kube/config' // 👈 path to your local kubeconfig
+        KUBECONFIG = 'C:/jenkins-kube/config' // 👈 path to your local kubeconfig
     }
 
     stages {
@@ -42,6 +42,8 @@ pipeline {
                 script {
                     sh '''
                         echo "KUBECONFIG is set to: $KUBECONFIG"
+                        ls -l "$KUBECONFIG"
+                        cat "$KUBECONFIG" | grep current-context
                         kubectl config get-contexts
                         kubectl config use-context minikube
                         sed "s|<IMAGE_TAG>|${TAG}|g" ${K8S_YAML} | kubectl apply -f -
