@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: java-demo
-        image: yourdockerhubusername/java-demo:<IMAGE_TAG>
+        image: drdocker108/java-demo:<IMAGE_TAG>
         ports:
         - containerPort: 8080
 ---
