@@ -41,15 +41,19 @@ pipeline {
             steps {
                 script {
                     sh '''
-                        export KUBECONFIG=C:/jenkins-kube/config
+                        export KUBECONFIG=/c/Users/rbih4/.kube/config
+                        CONTEXT_NAME=\$(kubectl config get-contexts --kubeconfig=\$KUBECONFIG -o=name | grep minikube || true)
 
-                        echo "Checking available contexts:"
-                        kubectl config get-contexts
+                        if [ -z "\$CONTEXT_NAME" ]; then
+                            echo "❌ Context 'minikube' not found in kubeconfig"
+                            kubectl config get-contexts --kubeconfig=\$KUBECONFIG
+                            exit 1
+                        fi
 
-                        echo "Using context:"
-                        kubectl config use-context minikube
+                        echo "✅ Using context: \$CONTEXT_NAME"
+                        kubectl --kubeconfig=\$KUBECONFIG --context=\$CONTEXT_NAME get pods -A
 
-                        sed "s|<IMAGE_TAG>|${TAG}|g" ${K8S_YAML} | kubectl apply -f -
+                        sed "s|<IMAGE_TAG>|${TAG}|g" ${K8S_YAML} | kubectl --kubeconfig=\$KUBECONFIG --context=\$CONTEXT_NAME apply -f -
                     '''
                 }
             }
