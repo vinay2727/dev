@@ -41,19 +41,14 @@ pipeline {
             steps {
                 script {
                     sh '''
+                        echo "📦 Setting KUBECONFIG..."
                         export KUBECONFIG=/c/Users/rbih4/.kube/config
-                        CONTEXT_NAME=\$(kubectl config get-contexts --kubeconfig=\$KUBECONFIG -o=name | grep minikube || true)
-
-                        if [ -z "\$CONTEXT_NAME" ]; then
-                            echo "❌ Context 'minikube' not found in kubeconfig"
-                            kubectl config get-contexts --kubeconfig=\$KUBECONFIG
-                            exit 1
-                        fi
-
-                        echo "✅ Using context: \$CONTEXT_NAME"
-                        kubectl --kubeconfig=\$KUBECONFIG --context=\$CONTEXT_NAME get pods -A
-
-                        sed "s|<IMAGE_TAG>|${TAG}|g" ${K8S_YAML} | kubectl --kubeconfig=\$KUBECONFIG --context=\$CONTEXT_NAME apply -f -
+        
+                        echo "🔍 Checking context:"
+                        kubectl --kubeconfig=$KUBECONFIG config get-contexts
+        
+                        echo "🚀 Deploying to minikube..."
+                        sed "s|<IMAGE_TAG>|${TAG}|g" ${K8S_YAML} | kubectl --kubeconfig=$KUBECONFIG --context=minikube apply -f -
                     '''
                 }
             }
