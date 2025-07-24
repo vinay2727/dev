@@ -41,11 +41,14 @@ pipeline {
             steps {
                 script {
                     sh '''
-                        echo "KUBECONFIG is set to: $KUBECONFIG"
-                        ls -l "$KUBECONFIG"
-                        cat "$KUBECONFIG" | grep current-context
+                        export KUBECONFIG=C:/jenkins-kube/config
+
+                        echo "Checking available contexts:"
                         kubectl config get-contexts
+
+                        echo "Using context:"
                         kubectl config use-context minikube
+
                         sed "s|<IMAGE_TAG>|${TAG}|g" ${K8S_YAML} | kubectl apply -f -
                     '''
                 }
