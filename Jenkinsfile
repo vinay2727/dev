@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        DOCKERHUB_IMAGE = 'yourdockerhubuser/java-demo'
+        DOCKERHUB_IMAGE = 'drdocker108/java-demo'
         TAG = "${env.BUILD_NUMBER}"
         K8S_YAML = 'k8s-deployment.yaml'
     }
@@ -10,7 +10,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git url: 'https://github.com/youruser/yourrepo.git', branch: 'main'
+                git url: 'https://github.com/vinay2727/dev.git', branch: 'main'
             }
         }
 
